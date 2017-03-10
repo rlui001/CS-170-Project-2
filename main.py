@@ -1,4 +1,4 @@
-
+from Instance import Instance
 
 def nearestNeighborClassifier(data, point):
 	""" 
@@ -21,6 +21,11 @@ def nearestNeighborClassifier(data, point):
 
 
 
+def main():
+	print 'Welcome to Ronson Lui\'s Feature Selection Algorithm.'
+	print 'Type in the name of the file to test: '
+	file = raw_input()
+
 
 
 
@@ -36,4 +41,5 @@ def nearestNeighborClassifier(data, point):
 
 
 if __name__ == '__main__':
+	main()
 # Grab data first and store in Instance object
