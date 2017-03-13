@@ -1,4 +1,5 @@
 import math
+import copy
 
 def nearestNeighborClassifier(data, point, feature_subset, num_instances):
 	""" 
@@ -38,7 +39,7 @@ def nearestNeighborClassifier(data, point, feature_subset, num_instances):
 	return nearestNeighbor
 
 
-def oneOutValidator(data, feature_subset, num_instances, num_features):
+def oneOutValidator(data, feature_subset, num_instances):
 	"""
 	Performs the one-out validation algorithm and returns the accuracy
 	"""
@@ -61,6 +62,43 @@ def oneOutValidator(data, feature_subset, num_instances, num_features):
 	accuracy = (correct / num_instances) * 100
 
 	return accuracy
+
+def forwardSelection(data, num_instances, num_features):
+	"""
+	Returns the subset of features that has the highest accuracy
+	by the forward selection algorithm.
+	"""
+
+	# Start with empty subset (use temp subset as well?)
+	# use copy.deepcopy to update feature_subset
+	feature_subset = []
+	# test each feature first, find highest accuracy and append to subset
+	topAccuracy = 0.0
+
+	# Loop a maximum of num_features times, 2^k - 1 possibilities
+	for i in range(num_features):
+		add_this = -1
+		for j in range(1, num_features + 1):
+
+			if j not in feature_subset:
+				print feature_subset
+				# If the feature j is not in the subset, can perform algorithm. Otherwise, ignore.
+				# Copy current subset into temp_subset
+				temp_subset = copy.deepcopy(feature_subset)
+				# Since j is not in the subset, we add it to temp and check accuracy
+				temp_subset.append(j)
+				print temp_subset
+				accuracy = oneOutValidator(data, temp_subset, num_instances)
+				print accuracy
+				if accuracy > topAccuracy:
+					topAccuracy = accuracy
+					add_this = j
+		if add_this >= 0:
+			feature_subset.append(add_this)
+		else:
+			break
+	print feature_subset, ' is the feature subset with highest accuracy: ', topAccuracy
+
 
 
 
@@ -157,7 +195,7 @@ def main():
 	for i in range(1, num_features + 1):
 		all_features.append(i)
 
-	accuracy = oneOutValidator(normalized_instances, all_features, num_instances, num_features)
+	accuracy = oneOutValidator(normalized_instances, all_features, num_instances)
 	print 'Running nearest neighbor with all ', num_features, ' features, using "leaving-one-out" evaluation, I get an accuracy of ', accuracy, '%.'
 
 
@@ -166,7 +204,15 @@ def main():
 	# TO FIX: Add algorithm to make the subsets in the chosen algorithms
 
 
-	# TO-DO: finish one out validation, accuracy on all features, FS and BE methods, choice redirection
+	# TO-DO: FS and BE methods, choice redirection
+	print 'Beginning search.'
+
+	if choice == 1:
+		forwardSelection(normalized_instances, num_instances, num_features)
+	# elif choice == 2:
+	# 	# backward elimination
+	# elif choice == 3:
+	# 	# special algorithm, optional
 
 
 
