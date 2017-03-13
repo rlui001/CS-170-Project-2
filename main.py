@@ -1,4 +1,3 @@
-from Instance import Instance
 import math
 
 def nearestNeighborClassifier(data, point, feature_subset, num_instances):
@@ -26,7 +25,7 @@ def nearestNeighborClassifier(data, point, feature_subset, num_instances):
 			# shortest_distance determines which is nearest neighbor
 			distance = 0
 			# Get distance, compare and update nearestNeighbor
-			# feature_subset: subset of all features. ex) [1,2,4] -> features 1, 2 and 4
+			# feature_subset: subset of features. ex) [1,2,4] -> features 1, 2 and 4
 			for j in range(len(feature_subset)):
 				distance = distance + pow((data[i][feature_subset[j]] - data[point][feature_subset[j]]), 2)
 
@@ -44,6 +43,24 @@ def oneOutValidator(data, feature_subset, num_instances, num_features):
 	Performs the one-out validation algorithm and returns the accuracy
 	"""
 	# FIX: Parameters may need to be changed depending on future fixes for algorithm
+
+	# Loop i over all instances
+	# set i to oneOut
+	# Run nearest neighbor on oneOut
+	# Check if the class of oneOut == class of nearest neighbor
+	# Update accuracy
+	correct = 0.0
+	for i in range(num_instances):
+		oneOut = i
+
+		neighbor = nearestNeighborClassifier(data, oneOut, feature_subset, num_instances)
+
+		if data[neighbor][0] == data[oneOut][0]:
+			correct = correct + 1
+
+	accuracy = (correct / num_instances) * 100
+
+	return accuracy
 
 
 
@@ -140,13 +157,16 @@ def main():
 	for i in range(1, num_features + 1):
 		all_features.append(i)
 
-	#accuracy = oneOutValidator(normalized_instances, all_features, num_instances, num_features)
-	#print 'Running nearest neighbor with all ', num_features, ' features, using "leaving-one-out" evaluation, I get an accuracy of ', accuracy, '.'
+	accuracy = oneOutValidator(normalized_instances, all_features, num_instances, num_features)
+	print 'Running nearest neighbor with all ', num_features, ' features, using "leaving-one-out" evaluation, I get an accuracy of ', accuracy, '%.'
 
 
 	# Run the algorithm chosen with feature subsets
 
 	# TO FIX: Add algorithm to make the subsets in the chosen algorithms
+
+
+	# TO-DO: finish one out validation, accuracy on all features, FS and BE methods, choice redirection
 
 
 
