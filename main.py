@@ -69,7 +69,7 @@ def forwardSelection(data, num_instances, num_features):
 	by the forward selection algorithm.
 	"""
 
-	# Start with empty subset (use temp subset as well?)
+	# Start with empty subset
 	# use copy.deepcopy to update feature_subset
 	feature_subset = []
 	# test each feature first, find highest accuracy and append to subset
@@ -97,6 +97,44 @@ def forwardSelection(data, num_instances, num_features):
 			feature_subset.append(add_this)
 		else:
 			break
+	print feature_subset, ' is the feature subset with highest accuracy: ', topAccuracy
+
+def backwardElimination(data, num_instances, num_features, topAcc):
+	"""
+	Returns the subset of features that has the highest accuracy 
+	by the backward elimination algorithm.
+	"""
+
+	# Similar to forward selection, except it works by elimination from a full set.
+	# If j is in the set, then remove it from the temp set and test accuracy
+	# If acc > highestAcc -> set new highestAcc and remove it from the actual subset
+	# If at any time the accuracy is no longer increasing, break the loop
+	# This is a greedy algorithm, so it will stop at a local maxima
+
+	# Start with full feature set
+	feature_subset = [i+1 for i in range(num_features)]
+	# Set current accuracy to accuracy found before feature algorithm
+	topAccuracy = topAcc
+	# Loop a maximum of num_features times, 2^k - 1 possibilties 
+	for i in range(num_features):
+		remove_this = -1
+		for j in range(1, num_features + 1):
+
+			if j in feature_subset:
+				temp_subset = copy.deepcopy(feature_subset)
+
+				temp_subset.remove(j)
+
+				accuracy = oneOutValidator(data, temp_subset, num_instances)
+				if accuracy > topAccuracy:
+					topAccuracy = accuracy
+					remove_this = j
+		if remove_this >= 0:
+			feature_subset.remove(remove_this)
+			print feature_subset
+		else:
+			break
+
 	print feature_subset, ' is the feature subset with highest accuracy: ', topAccuracy
 
 
@@ -198,19 +236,16 @@ def main():
 	accuracy = oneOutValidator(normalized_instances, all_features, num_instances)
 	print 'Running nearest neighbor with all ', num_features, ' features, using "leaving-one-out" evaluation, I get an accuracy of ', accuracy, '%.'
 
-
-	# Run the algorithm chosen with feature subsets
-
 	# TO FIX: Add algorithm to make the subsets in the chosen algorithms
 
 
-	# TO-DO: FS and BE methods, choice redirection
+	# TO-DO: BE methods, choice redirection
 	print 'Beginning search.'
 
 	if choice == 1:
 		forwardSelection(normalized_instances, num_instances, num_features)
-	# elif choice == 2:
-	# 	# backward elimination
+	elif choice == 2:
+		backwardElimination(normalized_instances, num_instances, num_features, accuracy)
 	# elif choice == 3:
 	# 	# special algorithm, optional
 
