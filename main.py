@@ -72,32 +72,41 @@ def forwardSelection(data, num_instances, num_features):
 	# Start with empty subset
 	# use copy.deepcopy to update feature_subset
 	feature_subset = []
+	final_set = []
 	# test each feature first, find highest accuracy and append to subset
 	topAccuracy = 0.0
 
 	# Loop a maximum of num_features times, 2^k - 1 possibilities
 	for i in range(num_features):
 		add_this = -1
+		local_add = -1
+		localAccuracy = 0.0
 		for j in range(1, num_features + 1):
-
 			if j not in feature_subset:
-				print feature_subset
 				# If the feature j is not in the subset, can perform algorithm. Otherwise, ignore.
 				# Copy current subset into temp_subset
 				temp_subset = copy.deepcopy(feature_subset)
 				# Since j is not in the subset, we add it to temp and check accuracy
 				temp_subset.append(j)
-				print temp_subset
+
 				accuracy = oneOutValidator(data, temp_subset, num_instances)
-				print accuracy
+				print '\tUsing feature(s) ', temp_subset, ' accuracy is ', accuracy, '%'
 				if accuracy > topAccuracy:
 					topAccuracy = accuracy
 					add_this = j
+				if accuracy > localAccuracy:
+					localAccuracy = accuracy
+					local_add = j
 		if add_this >= 0:
 			feature_subset.append(add_this)
+			final_set.append(add_this)
+			print '\n\nFeature set ', feature_subset, ' was best, accuracy is ', topAccuracy, '%\n\n'
 		else:
-			break
-	print feature_subset, ' is the feature subset with highest accuracy: ', topAccuracy
+			print '\n\n(Warning, Accuracy has decreased! Continuing search in case of local maxima)'
+			feature_subset.append(local_add)
+			print 'Feature set ', feature_subset, ' was best, accuracy is ', localAccuracy, '%\n\n'
+
+	print 'Finished search!! The best feature subset is', final_set, ' which has an accuracy of accuracy: ', topAccuracy, '%'
 
 def backwardElimination(data, num_instances, num_features, topAcc):
 	"""
@@ -240,7 +249,7 @@ def main():
 
 
 	# TO-DO: BE methods, choice redirection
-	print 'Beginning search.'
+	print 'Beginning search.\n\n'
 
 	if choice == 1:
 		forwardSelection(normalized_instances, num_instances, num_features)
