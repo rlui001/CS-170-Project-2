@@ -236,6 +236,9 @@ def main():
 	
 	# Algorithm selection
 	print 'Type the number of the algorithm you want to run.'
+	print '1. Forward Selection'
+	print '2. Backward Elimination'
+	print '3. Special algorithm (Not completed)'
 	choice = int(raw_input())
 	while choice < 1 or choice > 3:
 		print 'Invalid choice, please try again.'
