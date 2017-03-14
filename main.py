@@ -265,8 +265,8 @@ def main():
 		forwardSelection(normalized_instances, num_instances, num_features)
 	elif choice == 2:
 		backwardElimination(normalized_instances, num_instances, num_features, accuracy)
-	# elif choice == 3:
-	# 	# special algorithm, optional
+	elif choice == 3:
+		print 'Special algorithm not completed yet, exiting.'
 
 
 
