@@ -122,11 +122,14 @@ def backwardElimination(data, num_instances, num_features, topAcc):
 
 	# Start with full feature set
 	feature_subset = [i+1 for i in range(num_features)]
+	final_set = [i+1 for i in range(num_features)]
 	# Set current accuracy to accuracy found before feature algorithm
 	topAccuracy = topAcc
 	# Loop a maximum of num_features times, 2^k - 1 possibilties 
 	for i in range(num_features):
 		remove_this = -1
+		local_remove = -1
+		localAccuracy = 0.0
 		for j in range(1, num_features + 1):
 
 			if j in feature_subset:
@@ -135,16 +138,23 @@ def backwardElimination(data, num_instances, num_features, topAcc):
 				temp_subset.remove(j)
 
 				accuracy = oneOutValidator(data, temp_subset, num_instances)
+				print '\tUsing feature(s) ', temp_subset, ' accuracy is ', accuracy, '%'
 				if accuracy > topAccuracy:
 					topAccuracy = accuracy
 					remove_this = j
+				if accuracy > localAccuracy:
+					localAccuracy = accuracy
+					local_remove = j
 		if remove_this >= 0:
 			feature_subset.remove(remove_this)
-			print feature_subset
+			final_set.remove(remove_this)
+			print '\n\nFeature set ', feature_subset, ' was best, accuracy is ', topAccuracy, '%\n\n'
 		else:
-			break
+			print '\n\n(Warning, Accuracy has decreased! Continuing search in case of local maxima)'
+			feature_subset.remove(local_remove)
+			print 'Feature set ', feature_subset, ' was best, accuracy is ', localAccuracy, '%\n\n'
 
-	print feature_subset, ' is the feature subset with highest accuracy: ', topAccuracy
+	print 'Finished search!! The best feature subset is', final_set, ' which has an accuracy of accuracy: ', topAccuracy, '%'
 
 
 
